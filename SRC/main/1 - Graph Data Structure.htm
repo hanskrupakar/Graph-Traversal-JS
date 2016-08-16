@@ -1,0 +1,274 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>
+			LINEAR LINKED LIST
+		</title>
+		<style type="text/css">
+		ul
+		{
+			list-style-type: none;
+			display:inline;
+		}		
+		*
+		{
+			margin:0px;
+			padding:0px;		
+		}
+		.menu
+		{
+			border: 3px solid black;
+			width: 100px;
+			height: 200px;
+			text-align: center;
+			background-color: lime;
+		}
+		#m1 
+		{
+			position:absolute;
+			top: 20px;
+			left: 20px;	
+		}
+		#m2 
+		{
+			position:absolute;
+			top: 20px;
+			left: 220px;
+		}
+		#m3 
+		{
+			position:absolute;
+			top: 20px;
+			left: 420px;
+		}
+		#m4 
+		{
+			position:absolute;
+			top: 20px;
+			left: 620px;	
+		}
+		#m5 
+		{
+			position:absolute;
+			top: 20px;
+			left: 820px;
+		}
+		#m6 
+		{
+			position:absolute;
+			top: 300px;
+			left: 20px;	
+		}
+		#m7 
+		{
+			position:absolute;
+			top: 300px;
+			left: 220px;	
+		}
+		#m8 
+		{
+			position:absolute;
+			top: 300px;
+			left: 420px;
+		}
+		#m9 
+		{
+			position:absolute;
+			top: 300px;
+			left: 620px;	
+		}
+		#m10 
+		{
+			position:absolute;
+			top: 300px;
+			left: 820px;	
+		}
+		a
+		{
+			text-decoration: none;
+			display:block-inline;
+			width: 100%;
+			display:block-inline;
+		}
+		.menu > li
+		{
+			display:block-inline;	
+			width: 100%;
+			background-color: white;
+			color: maroon;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="menu" id="m1">
+			
+		</div>
+		<div class="menu" id="m2">
+		
+		</div>
+		<div class="menu" id="m3">
+			
+		</div>
+		<div class="menu" id="m4">
+			
+		</div>
+		<div class="menu" id="m5">
+			
+		</div>
+		<div class="menu" id="m6">
+			
+		</div>
+		<div class="menu" id="m7">
+			
+		</div>
+		<div class="menu" id="m8">
+			
+		</div>
+		<div class="menu" id="m9">
+			
+		</div>
+		<div class="menu" id="m10">
+			
+		</div>
+		<div id="xq"></div>
+		<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>		
+		<script type="text/javascript">
+			var node = function(non)
+			{	
+				this.nameofnode = non;
+				this.link =[];
+             			this.n=0;
+				
+				this.s=function(p)
+				{
+					var t=this;
+					var s=null;
+					if(t.nameofnode==p)
+					{
+						s = t;
+					}
+					else 
+					{
+						if(t.n>0)
+						{
+							for(var i=0;i<t.n;i++)
+							{
+								s = t.link[i].s(p);
+								if(s!=null)
+									break;
+							}
+						}
+					}
+					return s;
+				}
+				this.ins = function(str,p)
+				{
+					e = new node(str);
+					var t;
+					t=this.s(p);
+					if(t!=null)
+					{
+						t.link[t.n]=e;
+						t.n = t.n + 1;
+					}					
+					else
+						alert("element "+str+" cannot be inserted");
+					
+				}
+				this.disp = function()
+				{
+					var string = document.getElementById("xq");	
+					var t = this;
+					string.innerHTML = string.innerHTML + t.nameofnode + "<br>"; 
+					if(t.n!=0)
+					{
+						for(var e = 0; e<t.n; e++)
+						{
+							t.link[e].disp();
+						}
+					}
+				}
+				this.del = function(n)
+				{
+					var td = this;
+					var f =1;
+					var prev=null,next=td.link;
+					while(td!=null)
+					{
+						next=td.link; 
+						if(td.nameofnode == n)
+						{
+							if(td == this)
+							{
+								this.nameofnode = this.link.nameofnode;
+								this.link = this.link.link;								
+								f=0;
+							}
+							else if(td.link==null)
+							{
+								td = prev;
+								f=0;
+							}
+							else
+							{
+								prev.link=next;
+								f=0;
+							}
+						}
+						prev=td;
+						td = td.link;
+					}
+					if(f)
+						alert(n +" not found!");
+				}
+			}
+			var init = function()
+			{
+				document.getElementById("m1").style.display="block";
+				for(var i=2;i<=10;i++)
+					document.getElementById("m"+i).style.display="none";
+				root = new node("Root");
+				root.ins("Child1","Root");			
+				root.ins("Child6","Child1");
+				root.ins("Child2","Root");
+				root.ins("Child3","Root");
+				root.ins("X","Child1");			
+				root.ins("Child4","Root");
+				root.ins("Child5","Root");
+				root.ins("Y","Child1");
+				root.ins("Y","Child1");
+				root.ins("Y","Child1");
+				root.ins("Y","Child2");			
+				root.ins("X","Child2");	
+				document.getElementById("m1").innerHTML="<ul class=\"menu\"><li><a onclick = \"show(root.nameofnode,'m1')\" href=\"#\">"+root.nameofnode+"</a></li></ul>";
+			}
+			var show = function(nameofnode, parent)
+			{
+				var str = parent.substring(0,1);
+				var no = parseInt(parent.substring(1,2));
+				no++;
+				str+= no.toString();
+				var content = "";		
+				document.getElementById(str).innerHTML="";	
+				content="<ul class=\"menu\">"+document.getElementById(str).innerHTML;				
+				var x = root.s(nameofnode);
+				if(x.n>0)
+				{
+					for(var i=0;i<x.n;i++)
+					{
+						content +="<li><a onclick = \"show('"+x.link[i].nameofnode+"','"+str+"')\" href=\"#\">"+x.link[i].nameofnode+"</a></li>";
+					}
+				}
+				else
+					alert("End Of Menu");
+				content +="</ul>";
+				document.getElementById(str).innerHTML=content;
+				document.getElementById(str).style.display="block";					
+			}
+			window.onload=init;
+			//root.disp();
+		</script>
+	</body>
+</html>

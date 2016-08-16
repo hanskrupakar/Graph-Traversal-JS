@@ -1,0 +1,416 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>
+			GRAPH OF TREES
+		</title>
+		<style type="text/css">
+			.selecteditem
+			{
+				background-color:maroon;
+				color:yellow;
+			}
+			ul
+			{
+				list-style-type: none;
+				display:inline;
+			}		
+			*
+			{
+				margin:0px;
+				padding:0px;		
+			}
+			.menu
+			{
+				border: 3px solid black;
+				width: 100px;
+				height: 200px;
+				text-align: center;
+				background-color: orange;
+			}
+			#m1 
+			{
+				position:absolute;
+				top: 80px;
+				left: 80px;	
+			}
+			#m2 
+			{
+				position:absolute;
+				top: 80px;
+				left: 280px;
+			}
+			#m3 
+			{
+				position:absolute;
+				top: 80px;
+				left: 480px;
+			}
+			#m4 
+			{
+				position:absolute;
+				top: 80px;
+				left: 680px;	
+			}
+			#m5 
+			{
+				position:absolute;
+				top: 80px;
+				left: 880px;
+			}
+			#m6 
+			{
+				position:absolute;
+				top: 360px;
+				left: 100px;	
+			}
+			#m7 
+			{
+				position:absolute;
+				top: 360px;
+				left: 300px;	
+			}
+			#m8 
+			{
+				position:absolute;
+				top: 360px;
+				left: 480px;
+			}
+			#m9 
+			{
+				position:absolute;
+				top: 360px;
+				left: 700px;	
+			}
+			#m10 
+			{
+				position:absolute;
+				top: 360px;
+				left: 880px;	
+			}
+			a
+			{
+				text-decoration: none;
+				display:block;
+				width: 100%;
+				display:block-inline;
+			}
+			.menu > li
+			{
+				display:block;	
+				width: 100%;
+				background-color: white;
+				color: maroon;
+			}
+			h2
+			{
+				text-align: center;
+				color:rgb(140,100,100);
+			}
+			.fileUpload
+			{	
+				text-align:center;
+			}
+			#upload-id
+			{
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="fileUpload">
+	  		<fieldset style="background-color:SkyBlue;" class="fileUpload">
+		   	 	<h2>Json File:</h2>
+				<p id="upload">
+			     		<input type='file' id='fileinput' style='background-color:lime;' id='upload-id'>
+			     		<input type='button' id='btnLoad' value='Load' onclick='loadFile();'>
+				</p>
+	  		</fieldset>
+		</form>
+		<div class="menu" id="m1">
+			
+		</div>
+		<div class="menu" id="m2">
+		
+		</div>
+		<div class="menu" id="m3">
+			
+		</div>
+		<div class="menu" id="m4">
+			
+		</div>
+		<div class="menu" id="m5">
+			
+		</div>
+		<div class="menu" id="m6">
+			
+		</div>
+		<div class="menu" id="m7">
+			
+		</div>
+		<div class="menu" id="m8">
+			
+		</div>
+		<div class="menu" id="m9">
+			
+		</div>
+		<div class="menu" id="m10">
+			
+		</div>
+		<div id="xq"></div>
+		<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>		
+		<script type="text/javascript">
+			var node = function(non)
+			{	
+				this.nameofnode = non;
+				this.link =[];
+             			this.n=0;
+				this.visited=0;
+				this.s=function(p)
+				{
+					var t=this;
+					var s=null;
+					if(t.nameofnode==p)
+					{
+						s = t;
+					}
+					else 
+					{
+						if(t.n>0)
+						{
+							for(var i=0;i<t.n;i++)
+							{
+								s = t.link[i].s(p);
+								if(s!=null)
+									break;
+							}
+						}
+					}
+					return s;
+				}
+				this.ins = function(str,p)
+				{
+					e = new node(str);
+					var t;
+					t=this.s(p);
+					if(t!=null)
+					{
+						t.link[t.n]=e;
+						t.n = t.n + 1;
+					}					
+					else
+						alert("element "+str+" cannot be inserted");
+					
+				}
+				this.del = function(n)
+				{
+					var td = this;
+					var f =1;
+					var prev=null,next=td.link;
+					while(td!=null)
+					{
+						next=td.link; 
+						if(td.nameofnode == n)
+						{
+							if(td == this)
+							{
+								this.nameofnode = this.link.nameofnode;
+								this.link = this.link.link;								
+								f=0;
+							}
+							else if(td.link==null)
+							{
+								td = prev;
+								f=0;
+							}
+							else
+							{
+								prev.link=next;
+								f=0;
+							}
+						}
+						prev=td;
+						td = td.link;
+					}
+					if(f)
+						alert(n +" not found!");
+				}
+			}
+			var init = function()
+			{
+				document.getElementById("m1").style.display="block";
+				for(var i=2;i<=10;i++)
+					document.getElementById("m"+i).style.display="none";
+				root = new node("root");
+				root.ins("1","root");
+				root.ins("2","root");
+				root.ins("3","root");
+				root.ins("4","root");
+				root.ins("5","1");			
+				root.ins("6","1");
+				root.ins("7","1");
+				root.ins("8","2");				
+				root.ins("15","2");
+				root.ins("7","3");
+				root.ins("8","3");
+				root.ins("8","4");
+				root.ins("15","3");
+				root.ins("15","4");				
+				root.ins("8","6");
+				root.ins("12","6");
+				root.ins("13","6");
+				root.ins("9","7");
+				root.ins("10","7");
+				root.ins("11","7");
+				root.ins("14","8");
+				root.ins("15","8");
+				root.ins("16","8");
+				root.ins("16","12");
+				root.ins("15","13");
+				root.ins("16","13");
+				document.getElementById("m1").innerHTML="<ul class=\"menu\"><li><a onclick=\"show(root.nameofnode,'m1')\" href=\"#\">"+root.nameofnode+"</a></li></ul>";
+				list.push("m1");
+			}
+
+			var include=function(arr, obj) 
+			{
+   				for(var i=0; i<arr.length; i++) 
+				{
+        				if (arr[i] == obj) return i;
+    				}
+				return -1;
+			}
+
+			var list = [];
+
+
+			String.prototype.splice = function( idx, rem, s ) 
+			{
+   				return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
+			}
+
+			var show = function(nameofnode, parent)
+			{
+				if(include(list,nameofnode)>=0&&parent!=list[include(list,nameofnode)-1])
+				{			
+					var temp = list[include(list,nameofnode)+1].substring(1,2);
+					for(var i=parseInt(temp)+1;i<=10;i++)
+					{				
+						var ti = "m"+i;
+						document.getElementById(ti).style.display="none";
+						if(include(list,ti)>=0)
+						{
+							var p = root.s(list[include(list,ti)-1]);
+							p.visited=0;
+						}
+					}
+				}	
+				var content = document.getElementById(parent).innerHTML;
+				while(content.search(" class=\"selecteditem\"")>=0)
+				{
+					content=content.replace(' class="selecteditem"','');
+				}
+				content=content.splice(content.search(">"+nameofnode+"<"),0, " class=\"selecteditem\"");
+				document.getElementById(parent).innerHTML=content;
+				
+				var str = parent.substring(0,1);
+				var no = parseInt(parent.substring(1,2));
+				var f=1;
+				no++;
+				str+= no.toString();
+				var x = root.s(nameofnode);
+				if(x.visited==1 && document.getElementById(str).style.display=="none"&& document.getElementById(str).innerHTML=="")
+					document.getElementById(str).style.display="block";				
+				if(include(list,nameofnode)<0)
+				for(var k=no;k<=10;k++)
+				{
+					document.getElementById("m"+k).style.display="none";
+					if(include(list,"m"+k)>=0)
+					{
+						var p = root.s(list[include(list,"m"+k)-1]);
+						p.visited=0;
+					}					
+				}			
+				if(x.visited!=1)
+				{
+					content = "";		
+					document.getElementById(str).innerHTML="";
+					document.getElementById(str).style.display="block";	
+					content="<ul class=\"menu\">"+document.getElementById(str).innerHTML;		
+					if(x.n>0)
+					{
+						for(var i=0;i<x.n;i++)
+						{
+							content +="<li><a onclick=\"show('"+x.link[i].nameofnode+"','"+str+"')\" href=\"#\">"+x.link[i].nameofnode+"</a></li>";
+						}
+						x.visited=1;
+					}
+					else
+					{
+						alert("End Of Menu");
+						f=0;
+						document.getElementById(str).style.display="none";
+					}				
+					content +="</ul>";				
+					document.getElementById(str).innerHTML=content;
+					if(include(list,nameofnode)==-1 && f)
+						if(include(list,str)>=0)
+						{
+							list.splice(include(list,str)+1,20);
+							list[include(list,str)-1]=nameofnode;
+						}
+						else 
+							list.push(nameofnode, str);					
+				}
+				else
+				{
+						alert("Already Exists");
+				}			
+			}
+			function loadFile() 
+			{
+			    	var input, file, fr;
+			    	if (typeof window.FileReader !== 'function') 
+				{
+			      		alert("The file API isn't supported on this browser yet.");
+			      		return;
+		    		}
+			    	input = document.getElementById('fileinput');
+			    	if (!input) 
+				{
+			      		alert("Couldn't find the fileinput element.");
+			    	}
+			    	else if (!input.files) 
+				{
+			      		alert("This browser doesn't support `files`.");
+			    	}
+			    	else if (!input.files[0]) 
+				{
+			      		alert("Please select a file before clicking 'Load'.");
+			    	}
+			    	else 
+				{
+			      		file = input.files[0];
+			      		fr = new FileReader();
+			      		fr.onload = receivedText;
+			      		fr.readAsText(file);
+			    	}
+			    	function receivedText(e) 
+				{
+			      		lines = e.target.result;
+			      		var newArr = JSON.parse(lines); 
+					input = JSON.stringify(newArr);
+					var arr = [];
+					for(var x in newArr)
+					{
+		  				arr.push(newArr[x]);
+					}
+					alert(arr);
+			    	}
+		  	}
+			window.onload=init;
+		</script>
+	</body>
+</html>
