@@ -1,0 +1,281 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>
+			GRAPH OF TREES
+		</title>
+		<style type="text/css">
+			p
+			{
+				background-color:lime;
+				color: maroon;
+				font:italic;
+			}
+			body > button 
+			{
+				background: #428BCA;
+				color: #fff;
+				font-family: Sans-serif;
+				font-size: 20px;
+				height: 60px;
+				width: 150px;
+				line-height: 60px;
+				margin: 25px 25px;
+				text-align: center;
+	    			border: 0;
+	    			transition: all 0.3s ease 0s;
+			}
+			body
+			{
+				font-size:12px;
+			}
+			#d1
+			{
+				position:absolute;
+				top:1.2in;
+				left:0.2in;
+				height:545px;	
+				background-color:black;
+				width:400px;
+				vertical-align:text-top;
+				border: 5px solid green;
+				color:pink;
+				overflow:auto; 
+			}
+			#d2
+			{
+				position:absolute;
+				top:1.2in;
+				left:9in;
+				height:545px;	
+				background-color:black;
+				border: 5px solid green;
+				width:400px;
+				color:pink;
+				overflow:auto;
+			}
+			#b1
+			{
+				position:absolute;
+				top:3in;
+				left:5.7in;
+			}
+			button:hover 
+			{
+				background: #3071A9
+			}
+			#tb
+			{
+				position:absolute;
+				text-align:center;
+				top:2.665in;
+				width:400px;
+				height:40px;
+				left:4.6in;
+				font: italic bold 12px/30px Georgia, serif;
+			}
+			h3
+			{
+				text-align: center;
+				font-size:20px;
+				color:rgb(140,100,100);
+			}
+			.fileUpload
+			{	
+				width:1250px;
+				height:50px;
+				text-align:center;
+			}
+			#upload-id
+			{
+				text-align: center;
+			}
+			#instruct
+			{
+				background-color:black;
+				color:white;
+				font:bold;
+				position:absolute;
+				top:4in;
+				left:4.6in;
+				width:400px;
+				height:200px;
+				text-align:center;
+				border: 5px solid green;
+			}
+			div>h1
+			{
+				background-color:green;
+				color:white;
+			}
+			#d1>p
+			{
+				text-align:center;
+				font-size: 150%;
+			}
+			#d2>p
+			{
+				text-align:center;
+				font-size: 150%;
+			}
+		</style>
+	</head>
+	<body>
+	
+		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="fileUpload">
+			<fieldset style="background-color:SkyBlue;" class="fileUpload">
+				<h2>Json File:</h2>
+				<p id="upload">
+					<input type="file" id="fileinput" style='background-color:lime;' id='upload-id' />
+					<input type='button' value='Load' onclick='handleFileSelect();'>
+				</p>
+	  		</fieldset>
+		</form>
+		
+		<div id="d1">		</div>
+		<div id="d2">		</div>
+		
+		<div id="instruct">
+			<h3>INSTRUCTIONS:</h3>
+			<ol>
+			<li>Browse JSON file required using the Browse... Button</li> <br>
+			<li>Load the JSON document by clicking on the Load Button</li> <br>
+			<li>Enter Menu Item in the text box</li> <br>
+			<li>Click the button labeled CLICK to see the ancestors and descendants</li> <br>
+			</ol>
+		</div>
+		
+		<button type="button" id="b1" onclick="parseJSON()">CLICK</button> 
+		<input type="text" autofocus id="tb" placeholder="Name of Node:"></input>
+			
+		<script type="text/javascript">
+		
+			function handleFileSelect()
+            		{               
+		        	if (window.File && window.FileReader && window.FileList && window.Blob) {} 
+		        	else 
+		        	{
+		            		alert("The File APIs are not fully supported in this browser.");
+		            		return;
+		        	}   
+		        	input = document.getElementById('fileinput');
+		        	if (!input) 
+		          		alert("Couldn't find the fileinput element.");
+		       		else if (!input.files) 
+		          		alert("This browser doesn't seem to support the `files` property of file inputs.");
+		       		else if (!input.files[0]) 
+		          		alert("Please select a file before clicking 'Load'");               
+		       		else 
+		       		{
+		          		file = input.files[0];
+		          		fr = new FileReader();
+		          		fr.onload = receivedText;
+		          		fr.readAsText(file);
+		       		}
+            		}
+
+			function receivedText() 
+			{           
+               			result = fr.result;
+            		} 
+			
+			function rec(arr,ip)
+			{
+				if(arr=="[object Object]" && typeof arr[0]=="undefined")
+				{
+					for(var key in arr)
+						if(typeof arr[key]!="object")
+						{
+							if(r!=1)
+							{
+								if(desc.indexOf(tab)!=-1)
+									desc=desc.substring(0,desc.indexOf(tab)-1);
+								r=1;
+							}
+							if(arr["id"]==ip)
+							{
+								throw arr;
+							}
+							desc+="<br>"+tab+key+" : "+arr[key];
+						}
+						else
+						{
+							tab+="&nbsp;&nbsp;&nbsp;";
+							r=0;
+							rec(arr[key],ip);
+							r=0;
+							tab=tab.replace("&nbsp;&nbsp;&nbsp;","");
+						}
+				}
+				else if(typeof arr =="object" && arr[arr.length-1]!="undefined")
+				{
+					for(var i=0;i<arr.length;i++)
+					{
+						rec(arr[i],ip);
+					}
+				}
+			}
+			function des(arr)
+			{	
+				for(var key in arr)
+					if(typeof arr[key]!="object")
+					{
+						if(d.indexOf("<br>"+tab+key+" : "+arr[key])==-1)
+							d+="<br>"+tab+key+" : "+arr[key];
+					}
+					else
+					{
+						tab+="&nbsp;&nbsp;&nbsp;";
+						des(arr[key]);
+						tab=tab.replace("&nbsp;&nbsp;&nbsp;","");
+					}
+			}
+			
+			function curr(arr)
+			{
+				for(var key in arr)
+					if(typeof arr[key]!="object")
+					{
+						continue;
+					}
+					else
+					{
+						return arr[key];
+					}
+
+			}
+		
+			function parseJSON()
+			{
+				var obj=JSON.parse(result);
+				tab="", desc="",temp="",d="";
+				r=0;
+				var op1="<p>ANCESTORS:</p>",op2="<p>DESCENDANTS:</p>";
+				var ip=document.getElementById("tb").value.trim();
+				try
+				{
+					rec(obj,ip);
+				}
+				catch(arr)
+				{
+					des(curr(arr));
+				}
+				if(ip!="")
+				{
+						op2+=d;
+						op1+=desc;
+					if(op1=="<p>ANCESTORS:</p>")
+						op1="<p>ANCESTORS:</p> <br> <br> <br><h4 style='text-align:center'>N/A</h4>";
+					if(op2=="<p>DESCENDANTS:</p>")
+						op2="<p>DESCENDANTS:</p> <br> <br> <br><h4 style='text-align:center'>N/A</h4>";
+					document.getElementById("d1").innerHTML=op1;
+					document.getElementById("d2").innerHTML=op2;
+				}
+				obj=arr=op1=op2=ip=null;
+			}
+			
+		</script>
+	</body>
+</html>

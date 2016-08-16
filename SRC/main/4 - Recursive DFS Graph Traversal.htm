@@ -1,0 +1,306 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>
+			GRAPH OF TREES
+		</title>
+		<style type="text/css">
+			p
+			{
+				background-color:lime;
+				color: maroon;
+				font:italic;
+			}
+			body > button 
+			{
+				background: #428BCA;
+				color: #fff;
+				font-family: Sans-serif;
+				font-size: 20px;
+				height: 60px;
+				width: 150px;
+				line-height: 60px;
+				margin: 25px 25px;
+				text-align: center;
+	    			border: 0;
+	    			transition: all 0.3s ease 0s;
+			}
+			body
+			{
+				font-size:12px;
+			}
+			#d1
+			{
+				position:absolute;
+				top:1.2in;
+				left:0.2in;
+				height:1000px;	
+				background-color:black;
+				width:400px;
+				vertical-align:text-top;
+				border: 5px solid green;
+				color:pink;
+			}
+			#d2
+			{
+				position:absolute;
+				top:1.2in;
+				left:9in;
+				height:1000px;	
+				background-color:black;
+				border: 5px solid green;
+				width:400px;
+				color:pink;
+			}
+			#b1
+			{
+				position:absolute;
+				top:3in;
+				left:5.7in;
+			}
+			button:hover 
+			{
+				background: #3071A9
+			}
+			#tb
+			{
+				position:absolute;
+				text-align:center;
+				top:2.665in;
+				width:400px;
+				height:40px;
+				left:4.6in;
+				font: italic bold 12px/30px Georgia, serif;
+			}
+			h3
+			{
+				text-align: center;
+				font-size:20px;
+				color:rgb(140,100,100);
+			}
+			.fileUpload
+			{	
+				width:1250px;
+				height:50px;
+				text-align:center;
+			}
+			#upload-id
+			{
+				text-align: center;
+			}
+			#instruct
+			{
+				background-color:black;
+				color:white;
+				font:bold;
+				position:absolute;
+				top:4in;
+				left:4.6in;
+				width:400px;
+				height:200px;
+				text-align:center;
+				border: 5px solid green;
+			}
+			div>h1
+			{
+				background-color:green;
+				color:white;
+			}
+			#d1>p
+			{
+				text-align:center;
+				font-size: 150%;
+			}
+			#d2>p
+			{
+				text-align:center;
+				font-size: 150%;
+			}
+		</style>
+	</head>
+	<body>
+	
+		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="fileUpload">
+			<fieldset style="background-color:SkyBlue;" class="fileUpload">
+				<h2>Json File:</h2>
+				<p id="upload">
+					<input type="file" id="fileinput" style='background-color:lime;' id='upload-id' />
+					<input type='button' value='Load' onclick='handleFileSelect();'>
+				</p>
+	  		</fieldset>
+		</form>
+		
+		<div id="d1">		</div>
+		<div id="d2">		</div>
+		
+		<div id="instruct">
+			<h3>INSTRUCTIONS:</h3>
+			<ol>
+			<li>Browse JSON file required using the Browse... Button</li><br>
+			<li>Load the JSON document by clicking on the Load Button</li><br>
+			<li>Enter Menu Item in the text box</li><br>
+			<li>Click the button labeled CLICK to see the ancestors and descendants</li><br>
+			</ol>
+		</div>
+		
+		<button type="button" id="b1" onclick="parseJSON()">CLICK</button> 
+		<input type="text" autofocus id="tb" placeholder="Name of Node:"></input>
+			
+		<script type="text/javascript">
+		
+			function handleFileSelect()
+            		{               
+		        	if (window.File && window.FileReader && window.FileList && window.Blob) {} 
+		        	else 
+		        	{
+		            		alert("The File APIs are not fully supported in this browser.");
+		            		return;
+		        	}   
+		        	input = document.getElementById('fileinput');
+		        	if (!input) 
+		          		alert("Couldn't find the fileinput element.");
+		       		else if (!input.files) 
+		          		alert("This browser doesn't seem to support the `files` property of file inputs.");
+		       		else if (!input.files[0]) 
+		          		alert("Please select a file before clicking 'Load'");               
+		       		else 
+		       		{
+		          		file = input.files[0];
+		          		fr = new FileReader();
+		          		fr.onload = receivedText;
+		          		fr.readAsText(file);
+		       		}
+            		}
+
+			function receivedText() 
+			{           
+               			result = fr.result;
+            		}  
+            		
+            		representations=["ObjectType","Category","Planning Group"];
+            				
+            		function finddesc(obj,ip)
+			{
+				if(representations.indexOf(ip)!=-1)
+					asc="<br><br><br><hr><h4 style='text-align:center'>Representational Input</h4><hr>";
+				else
+				{
+					oldo=obj;
+					var noe=asc.split("<hr>");
+					asc="";
+					if(noe[noe.length-1]=="")
+						noe.splice(noe.length-1,1);
+					var x;
+					for(var id=0;id<noe.length;id++)
+					{
+						x=noe[id].split("<br>");
+						x.splice(x.length-1,1);
+						for(var i=0;i<x.length;i++)
+						{
+								obj=obj[x[i]];
+						}
+						obj=obj[ip];
+						if(typeof obj!="undefined" && noe.length>0 && x.length>3)
+							asc+="<hr style='width:50%; color:red'><div style='text-align:center;'><div style='color:white; font:arial bold 15px;'>PROJECT: </div>"+x[i-2]+"</div><hr style='width:50%; color:red'>";
+						sp="";	
+						desc(obj,ip);
+						if(asc.indexOf("<hr>")!=-1)
+							asc+="<hr>";
+						obj=oldo;
+					}
+				}
+				x=sp=null;
+			}
+            		
+            		function desc(obj,ip)
+			{
+				for(var key in obj)
+				{
+					if(sp=="" && asc!="")
+						asc+="<hr>";
+					if(isNaN(key))
+					{
+						asc+=sp+key+"<br>";
+						sp+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						desc(obj[key],ip);
+						sp=sp.replace("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;","");
+					}
+					else
+					{
+						asc+=sp+obj[key]+"<br>";
+					}
+				}
+			}
+            		
+			function findasc(obj,ip)
+			{
+				path="",asc="",f=999,level=0;
+				if(representations.indexOf(ip)!=-1)
+					asc+="<br><br><br><hr><h4 style='text-align:center;'>Representational Input</h4><hr>";
+				else
+					recursive(obj,ip);
+				path=f=level=null;
+			}
+			
+			function recursive(obj,ip)
+			{
+				for(var key in obj)
+				{
+					if(isNaN(key))
+					{
+						if(ip==key)
+						{
+							asc+=path+"<hr>";
+							f=level;
+							return;
+						}
+						else
+						{
+							path+=key+"<br>";
+							level++;
+							if(level<=f)
+								recursive(obj[key],ip);
+							level--;
+							path=path.replace(key+"<br>","");
+						}	
+					}
+					else
+					{
+						if(obj.indexOf(ip)!=-1)
+							asc+=path+"<hr>";
+						return;
+					}
+				}
+			}
+			
+			function parseJSON()
+			{
+				var obj=JSON.parse(result);
+				var arr=[],op1="<p>ANCESTORS:</p>",op2="<p>DESCENDANTS:</p>";
+				var ip=document.getElementById("tb").value.trim();
+				if(ip!="")
+				{
+					findasc(obj,ip);
+					op1+=asc;
+					finddesc(obj,ip);
+					op2+=asc;
+					for(var i=0;i<representations.length;i++)
+						if(op1.indexOf(representations[i])!=-1)
+							break;
+					while(op1.indexOf(representations[i]+"<br>")!=-1)
+						op1=op1.replace(representations[i]+"<br>","");
+					if(op1=="<p>ANCESTORS:</p>" || op1=="<p>ANCESTORS:</p><hr>")
+						op1="<p>ANCESTORS:</p><br><br><br><h4 style='text-align:center'>N/A</h4>";
+					if(op2=="<p>DESCENDANTS:</p>" || op2=="<p>DESCENDANTS:</p><hr>")
+						op2="<p>DESCENDANTS:</p><br><br><br><h4 style='text-align:center'>N/A</h4>";
+					document.getElementById("d1").innerHTML=op1;
+					document.getElementById("d2").innerHTML=op2;
+				}
+				obj=arr=op1=op2=ip=null;
+			}
+			
+		</script>
+	</body>
+</html>
